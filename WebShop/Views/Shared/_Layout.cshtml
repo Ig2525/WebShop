@@ -25,9 +25,40 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Продукти</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Категорії</a>
                         </li>
                     </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "form-inline my-2 my-lg-0" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <a asp-controller="Profile" asp-action="Index">Привіт @User.Identity.Name</a>
+
+                            <a href="#" onclick="document.getElementById('logoutForm').submit();"
+                       class="nav-link btn btn-link text-dark">
+                                @* @await Component.InvokeAsync("Test")*@
+
+                                Вихід
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <ul class="nav navbar-nav ml-auto">
+                            @*<li>@Html.ActionLink("Реєстрація", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Вхід</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Registration">Registration</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>

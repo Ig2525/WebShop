@@ -58,6 +58,7 @@ namespace WebShop
             services.AddDistributedMemoryCache();
             
             services.AddAutoMapper(typeof(AppMapProfile));
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +82,8 @@ namespace WebShop
                 FileProvider = new PhysicalFileProvider(dir),
                 RequestPath = "/images"
             });
+
+            app.UseSession();
 
             app.UseRouting();
 
