@@ -55,4 +55,17 @@ namespace WebShop.Models
         public int Id { get; set; }
         
     }
+
+    public class ProductDetailsViewModel
+    {
+        public int Id { get; set; }
+        [Display(Name = "Назва")]
+        public string Name { get; set; }
+        [Display(Name = "Ціна")]
+        public decimal Price { get; set; }
+        [Display(Name = "Категорія")]
+        public string Category { get; set; }
+        public List<string> Images { get; set; }
+    }
+
 }

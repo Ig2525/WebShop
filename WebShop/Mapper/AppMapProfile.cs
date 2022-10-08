@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 using WebShop.Data.Entities;
 using WebShop.Models;
 using WebShop.Models.Helpers;
@@ -28,6 +29,11 @@ namespace WebShop.Mapper
 
             CreateMap<ProductEntity, ProductEditViewModel>()
                 .ReverseMap();
+
+            CreateMap<ProductEntity, ProductDetailsViewModel>()
+                .ForMember(x => x.Category, opt => opt.MapFrom(x => x.Category.Name))
+                .ForMember(x => x.Images, opt => opt.MapFrom(x => x.ProductImages
+                .Select(i => $@"/images/{i.Name}")));
 
         }
     }

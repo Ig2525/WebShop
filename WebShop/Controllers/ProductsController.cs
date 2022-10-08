@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Xml.Linq;
 using WebShop.Data;
 using WebShop.Data.Entities;
 using WebShop.Models;
@@ -89,13 +90,26 @@ namespace WebShop.Controllers
         public string Delete(ProductEditViewModel model)
         {
             ProductEntity p = _appContext.Products.SingleOrDefault(x => x.Id == model.Id);
-            if (p!=null)
+            if (p != null)
             {
                 _appContext.Products.Remove(p);
                 _appContext.SaveChanges();
             }
            
             return "ok";
+        }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var p = _appContext.Products
+                 .Include(c => c.Category)
+                .Include(x=>x.ProductImages)
+                .SingleOrDefault(x => x.Id == id);
+
+            var model = _mapper.Map<ProductDetailsViewModel>(p);
+
+            return View(model);
         }
     }
 }

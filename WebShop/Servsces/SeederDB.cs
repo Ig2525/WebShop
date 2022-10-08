@@ -65,6 +65,32 @@ namespace WebShop.Servsces
                     }
                 }
 
+                if (!context.Products.Any())
+                {
+                    ProductEntity product = new ProductEntity
+                    {
+                        Name = "Skechers D'Lites Черевики",
+                        CategoryId = 3,
+                        Price = 3199,
+                        Description = "Черевики чоловічі Skechers D'Lites (999304 BKW) чорного кольору. " +
+                        "Стильні черевики з м'якою устілкою, на високій пружній підошві."
+                    };
+                    context.Products.Add(product);
+                    context.SaveChanges();
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        var image = new ProductImageEntity
+                        {
+                            Name = $"{i}p.jpg",
+                            Priority = i,
+                            ProductId = product.Id
+                        };
+                        context.ProductImages.Add(image);
+                        context.SaveChanges();
+                    }
+                }
+
+
             }
         }
     }
