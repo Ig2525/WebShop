@@ -129,7 +129,11 @@ namespace WebShop.Controllers
             {
                 var fileExp = Path.GetExtension(model.File.FileName);
 
-                //вставити
+                //вставка розширення файла після перетворення в модальному вікні
+                if (string.IsNullOrEmpty(fileExp))
+                {
+                    fileExp = ".jpeg";
+                }
                 var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
                 fileName = Path.GetRandomFileName() + fileExp;
                
@@ -137,10 +141,11 @@ namespace WebShop.Controllers
                 {
                     model.File.CopyTo(ms);
                     Bitmap bmp =new Bitmap(Image.FromStream(ms));
-                    var saveImage = ImageWorker.CompressImage(bmp, 1200, 1200, false);
-                    if(saveImage.Height>saveImage.Width)
-                        saveImage.RotateFlip(RotateFlipType.Rotate270FlipNone); //Автоповорот фото
-                    saveImage.Save(Path.Combine(dirPath,fileName), ImageFormat.Jpeg);
+                    var saveImage = ImageWorker.CompressImage(bmp, 1200, 1200, false, true);
+                    //Автоповорот фото
+                    //if (saveImage.Height>saveImage.Width)
+                    //    saveImage.RotateFlip(RotateFlipType.Rotate270FlipNone); 
+                    saveImage.Save(Path.Combine(dirPath,fileName), ImageFormat.Jpeg); //Прзорість залежить від  формату?
                 }
 
 
