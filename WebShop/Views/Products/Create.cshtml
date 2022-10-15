@@ -62,22 +62,44 @@
     <a asp-action="Index">Повернутись до списку</a>
 </div>
 
+
+
+
 @section Scripts {
     <script>
         window.onload = function () {
             const myImages = document.getElementById("myImages");
             const files = document.getElementById("files");
-            files.onchange = function (e) {
+            files.onchange = async function (e) {
                 const list = e.target.files;
                 if (list && list.length) {
                     for (let i = 0; i < list.length; i++) {
                         const file = list[i];
-                        const url = URL.createObjectURL(file);
+                        var formData=new FormData();
+                        formData.append("file",file);
+                        const resp = await axios.post("/Products/Upload", formData,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data"
+                            }
+                        });
+                        console.log("upload image resp", resp.data);
+                        const pimage = resp.data;
+                        const url = "/images/" + pimage.name;
                         var data = `
-                                <img src = ${url} height="100" />
-                                `;
+                                    <img src = ${url} height="100" />
+                                    <input type="hidden" name="images"
+                                            value=${pimage.id} />
+                                    `;
                         console.log(data);
                         myImages.innerHTML += data;
+                        
+                    //    const url = URL.createObjectURL(file);
+                    //    var data = `
+                    //            <img src = ${url} height="100" />
+                    //            `;
+                    //    console.log(data);
+                    //    myImages.innerHTML += data;
                     }
                 }
                 e.target.value = "";

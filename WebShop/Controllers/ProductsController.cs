@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using WebShop.Data;
 using WebShop.Data.Entities;
+using WebShop.Helpers;
 using WebShop.Models;
 using WebShop.Models.Helpers;
 
@@ -48,6 +53,12 @@ namespace WebShop.Controllers
                 var product =_mapper.Map<ProductEntity>(model);
                 _appContext.Products.Add(product);
                 _appContext.SaveChanges();
+                foreach (var id in model.Images)
+                {
+                    var productImage = _appContext.ProductImages.SingleOrDefault(x => x.Id == id);
+                    productImage.ProductId = product.Id;
+                    _appContext.SaveChanges();
+                }
                 return RedirectToAction(nameof(Index));
 
             }
@@ -55,8 +66,6 @@ namespace WebShop.Controllers
             _mapper.Map<SelectItemViewModel>(x)).ToList();
             return View(model);
         }
-
-
 
         [HttpGet]
         public IActionResult Edit(int id)
@@ -111,5 +120,41 @@ namespace WebShop.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<ProductImageItemViewModel> Upload(ProductImageCreateViewModel model)
+        {
+            string fileName = string.Empty;
+            if (model.File != null)
+            {
+                var fileExp = Path.GetExtension(model.File.FileName);
+
+                //вставити
+                var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                fileName = Path.GetRandomFileName() + fileExp;
+               
+                using(var ms= new MemoryStream())
+                {
+                    model.File.CopyTo(ms);
+                    Bitmap bmp =new Bitmap(Image.FromStream(ms));
+                    var saveImage = ImageWorker.CompressImage(bmp, 1200, 1200, false);
+                    if(saveImage.Height>saveImage.Width)
+                        saveImage.RotateFlip(RotateFlipType.Rotate270FlipNone); //Автоповорот фото
+                    saveImage.Save(Path.Combine(dirPath,fileName), ImageFormat.Jpeg);
+                }
+
+
+                //using (var stream = System.IO.File.Create(Path.Combine(dirPath, fileName)))
+                //{
+                //    await model.File.CopyToAsync(stream);
+                //}
+            }
+            ProductImageEntity productImage = new ProductImageEntity();
+            productImage.Name = fileName;
+            _appContext.ProductImages.Add(productImage);
+            _appContext.SaveChanges();
+            return new ProductImageItemViewModel { Id = productImage.Id, Name = productImage.Name };
+        }
+
     }
 }

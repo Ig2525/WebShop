@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 using WebShop.Models.Helpers;
@@ -30,6 +31,7 @@ namespace WebShop.Models
             [Display(Name = "Опис")]
             public string Description { get; set; }
             public List<SelectItemViewModel> Categories { get; set; }
+        public int[] Images { get; set; }
         }
 
     public class ProductEditViewModel
@@ -68,4 +70,15 @@ namespace WebShop.Models
         public List<string> Images { get; set; }
     }
 
+    public class ProductImageCreateViewModel
+    {
+        [Display(Name = "Оберіть фото продукта")]
+        public IFormFile File { get; set; }
+    }
+
+    public class ProductImageItemViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
